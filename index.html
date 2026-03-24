@@ -107,6 +107,15 @@
             font-size: 1.5rem;
             font-weight: bold;
             padding: 30px;
+            width: 100%;
+        }
+
+        .current-time {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         @media (max-width: 768px) {
@@ -130,6 +139,8 @@
     <div class="container">
         <h1>📚 英文默書倒計時</h1>
         
+        <div class="current-time" id="current-time"></div>
+        
         <div class="countdown-grid">
             <!-- 倒計時器 1 -->
             <div class="countdown-card">
@@ -152,15 +163,32 @@
     </div>
 
     <script>
-        // ⚠️ 請在這裡修改年份
-        const YEAR = 2025; // 改為 2025 或 2026
+        // ⚠️ 請在這裡修改年份（2025 或 2026）
+        const YEAR = 2025;
 
-        // 設定目標日期
+        // 設定目標日期（默書當天 00:00:00）
         const targetDates = [
-            { id: 'timer-1', date: new Date(`${YEAR}-03-31T00:00:00`) },
-            { id: 'timer-2', date: new Date(`${YEAR}-04-14T00:00:00`) }
+            { id: 'timer-1', date: new Date(`${YEAR}-03-31T00:00:00`), name: 'A 及 B 部份' },
+            { id: 'timer-2', date: new Date(`${YEAR}-04-14T00:00:00`), name: '適合啲部份' }
         ];
 
+        // 顯示當前時間
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: true
+            };
+            document.getElementById('current-time').textContent = 
+                '🕐 當前時間：' + now.toLocaleString('zh-HK', options);
+        }
+
+        // 計算倒計時（從現在到目標日期）
         function updateCountdown(targetDate, elementId) {
             const now = new Date();
             const diff = targetDate - now;
@@ -171,6 +199,7 @@
                 return;
             }
 
+            // 計算天、時、分、秒
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -198,12 +227,14 @@
 
         // 每秒更新
         setInterval(() => {
+            updateCurrentTime();
             targetDates.forEach(item => {
                 updateCountdown(item.date, item.id);
             });
         }, 1000);
 
         // 立即執行一次
+        updateCurrentTime();
         targetDates.forEach(item => {
             updateCountdown(item.date, item.id);
         });
