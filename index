@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英文默書倒計時</title>
+    <style>
+        /* 頁面整體樣式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* 倒計時卡片容器 */
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* 單個倒計時卡片 */
+        .countdown-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 300px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .countdown-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 標題樣式 */
+        .card-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+            min-height: 50px; /* 確保高度一致 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .target-date {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        /* 時間數字樣式 */
+        .time-box {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            background: #eaf6ff;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+        }
+
+        .label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        /* 倒數結束樣式 */
+        .finished {
+            color: #e74c3c;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📚 英文默書倒計時</h1>
+
+    <div class="container">
+        <!-- 倒計時器 1 -->
+        <div class="countdown-card">
+            <div class="card-title">第二次英文默書<br>A 及 B 部份</div>
+            <div class="target-date">目標日期：3 月 31 日</div>
+            <div id="timer-1" class="time-box">
+                <!-- JavaScript 將在此處填入數字 -->
+            </div>
+        </div>
+
+        <!-- 倒計時器 2 -->
+        <div class="countdown-card">
+            <div class="card-title">第二次英文默書<br>適合啲部份</div>
+            <div class="target-date">目標日期：4 月 14 日</div>
+            <div id="timer-2" class="time-box">
+                <!-- JavaScript 將在此處填入數字 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 設定區域 (請在這裡修改年份)
+        // ==========================================
+        
+        // 注意：2025 年的 3 月 31 日 和 4 月 14 日 其實是「星期一」
+        // 2026 年的這兩個日期才是「星期二」
+        // 如果你是指明年的默書，請將年份改為 2025
+        // 如果你嚴格按照「星期二」，請將年份改為 2026
+        const YEAR = 2025; 
+
+        // 設定目標日期 (格式：年 - 月 - 日)
+        const date1 = new Date(`${YEAR}-03-31T00:00:00`);
+        const date2 = new Date(`${YEAR}-04-14T00:00:00`);
+
+        // ==========================================
+        // 倒計時邏輯 (不需要修改)
+        // ==========================================
+
+        function updateCountdown(targetDate, elementId) {
+            const now = new Date();
+            const diff = targetDate - now;
+
+            const element = document.getElementById(elementId);
+
+            if (diff <= 0) {
+                element.innerHTML = '<div class="finished">默書已開始 / 已結束</div>';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            element.innerHTML = `
+                <div class="time-unit"><span class="number">${days}</span><span class="label">天</span></div>
+                <div class="time-unit"><span class="number">${hours}</span><span class="label">時</span></div>
+                <div class="time-unit"><span class="number">${minutes}</span><span class="label">分</span></div>
+                <div class="time-unit"><span class="number">${seconds}</span><span class="label">秒</span></div>
+            `;
+        }
+
+        // 每秒更新一次
+        setInterval(() => {
+            updateCountdown(date1, 'timer-1');
+            updateCountdown(date2, 'timer-2');
+        }, 1000);
+
+        // 頁面加載時立即執行一次，避免延遲
+        updateCountdown(date1, 'timer-1');
+        updateCountdown(date2, 'timer-2');
+
+    </script>
+</body>
+</html>
+
